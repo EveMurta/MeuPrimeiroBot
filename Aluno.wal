@@ -1,0 +1,32 @@
+�defVar --name studentName --type String
+defVar --name studentGradeText --type String
+defVar --name stendeGradeNumber --type Numeric
+defVar --name answer --type String
+//Esse Script roda o processo de inserção de notas do estudante
+repeat
+	//Mensagem de solicitação de inserção de dados ao usuário
+	goSub --label EntradasDoUsuario
+	//Estrutura condicional de indicação de estatus do estudante: Passou ou reprovou
+	goSub --label Validacao
+	//Caixa de mensagem perguntando se o usuário deseja continuar
+	messageBox --title Pergunta --text "Deseja continuar?" --icon "Question" --buttons "YesNo" --defaultbutton "FirstButton" --comment "Esse comando roda depois da rotina de pergunta se o usuário não tem mais notas para validação" answer=value
+until --left "${answer}" --operator "Equal_To" --right Yes
+beginSub --name EntradasDoUsuario
+inputBox --title "Nome do Estudante" --prompt "Insira o nome do estudante:" studentName=value
+inputBox --title "Nota do Auno" --prompt "Insira a nota do aluno:" studentGradeText=value
+convertStringToNumber --text "${studentGradeText}" --allowleadingsign  --allowdecimalpoint  stendeGradeNumber=value
+logMessage --message "${studentName}\r\n${stendeGradeNumber}" --type "Info"
+endSub
+beginSub --name Validacao
+if --left "${stendeGradeNumber}" --operator "Greater_Than" --right 10
+	messageBox --title "Nota inválida" --text "A nota informada não é válida! Essa deve estar entre 0 e 10." --icon "Information" --buttons "OK" --defaultbutton "FirstButton"
+elseIf --left "${stendeGradeNumber}" --operator "Less_Than" --right 0
+	messageBox --title "Nota inválida" --text "A nota informada não é válida! Essa deve estar entre 0 e 10." --icon "Information" --buttons "OK" --defaultbutton "FirstButton"
+elseIf --left "${stendeGradeNumber}" --operator "Greater_Than_Equal_To" --right 5
+	messageBox --title "Estudade passou" --text "O estudande passou na avaliação!" --icon "Information" --buttons "OK" --defaultbutton "FirstButton"
+	logMessage --message "Nome: ${studentName}\r\nNota: ${stendeGradeNumber}\r\nO estudante passou na avaliação!" --type "Info"
+else
+	messageBox --title "Estudante reprovado" --text "O estudante reprovou no exame." --icon "Information" --buttons "OK" --defaultbutton "FirstButton"
+	logMessage --message "Nome: ${studentName}\r\nNota: ${stendeGradeNumber}\r\nO estudante reprovou na avaliação." --type "Info"
+endIf
+endSub*	23.0.15.0
